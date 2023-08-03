@@ -1,11 +1,9 @@
-import { z } from 'zod'
 import 'dotenv/config'
+import { z } from 'zod'
 
 export const envSchema = z.object({
-  TOKEN: z.string(),
-  GUILD_ID: z.string(),
-  CHANNEL_ID: z.string(),
-  CLIENT_ID: z.string(),
+  DISCORD_TOKEN: z.string(),
+  DISCORD_CLIENT_ID: z.string(),
   CONOHA_USERNAME: z.string(),
   CONOHA_PASSWORD: z.string(),
   TENANT_ID: z.string(),

@@ -17,16 +17,16 @@ const commands = [
   {
     name: 'status',
     description: 'サーバーの状態を確認する',
-  }
+  },
 ]
 
-const rest = new REST({ version: '10' }).setToken(env.TOKEN)
+const rest = new REST({ version: '10' }).setToken(env.DISCORD_TOKEN)
 
 async function refreshCommands() {
   try {
     console.log('Started refreshing application (/) commands.')
 
-    await rest.put(Routes.applicationCommands(env.CLIENT_ID), { body: commands })
+    await rest.put(Routes.applicationCommands(env.DISCORD_CLIENT_ID), { body: commands })
 
     console.log('Successfully reloaded application (/) commands.')
   } catch (error) {

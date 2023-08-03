@@ -1,6 +1,6 @@
 import { ActivityType, Client, GatewayIntentBits } from 'discord.js'
-import { env } from './lib/env'
 import { doAction, getStatus } from './lib/conoha'
+import { env } from './lib/env'
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 
@@ -19,15 +19,6 @@ client.on('ready', () => {
       }
 
       client.user!.setActivity(`サーバーは${statusText}`, { type: ActivityType.Playing })
-      //client.guilds.cache.forEach((guild) => {
-      //  if (guild.id == env.GUILD_ID) {
-      //    guild.channels.cache.forEach((channel) => {
-      //      if (channel.id == env.CHANNEL_ID) {
-      //        channel.setName(`サーバーの状態は${statusText}です`)
-      //      }
-      //    })
-      //  }
-      //})
     })
   }, 5000)
 })
@@ -71,4 +62,4 @@ client.on('interactionCreate', async (interaction) => {
   }
 })
 
-client.login(env.TOKEN)
+client.login(env.DISCORD_TOKEN)
