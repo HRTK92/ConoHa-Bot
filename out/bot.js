@@ -44,21 +44,29 @@ client.on('ready', function () {
     console.log("Logged in as ".concat(client.user.tag, "!"));
     setInterval(function () {
         (0, conoha_1.getStatus)().then(function (status) {
-            var statusText = '';
             if (status == 'ACTIVE') {
-                statusText = '起動中';
                 client.user.setStatus('online');
+                fetch("https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=".concat(env_1.env.STEAM_WEB_API_KEY, "&filter=addr\\").concat(env_1.env.SERVER_IP)).then(function (res) {
+                    res.json().then(function (json) {
+                        if (!json.response)
+                            return;
+                        var onlinePlayers = json.response.servers[0].players;
+                        var maxPlayers = json.response.servers[0].max_players;
+                        client.user.setActivity("".concat(onlinePlayers, "/").concat(maxPlayers, "\u4EBA\u304C\u30D7\u30EC\u30A4\u4E2D"), {
+                            type: discord_js_1.ActivityType.Playing,
+                        });
+                    });
+                });
             }
             if (status == 'SHUTOFF') {
-                statusText = '停止中';
                 client.user.setStatus('idle');
+                client.user.setActivity("\u30B5\u30FC\u30D0\u30FC\u306F\u505C\u6B62\u4E2D", { type: discord_js_1.ActivityType.Playing });
             }
-            client.user.setActivity("\u30B5\u30FC\u30D0\u30FC\u306F".concat(statusText), { type: discord_js_1.ActivityType.Playing });
         });
     }, 5000);
 });
 client.on('interactionCreate', function (interaction) { return __awaiter(void 0, void 0, void 0, function () {
-    var message, e_1, message, e_2, message, e_3, status_1, statusText;
+    var message, e_1, message, e_2, message, e_3, status_1, statusText, res, json, onlinePlayers, maxPlayers;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -81,7 +89,7 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 return [2 /*return*/];
             case 5:
                 message.edit('✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります');
-                return [3 /*break*/, 21];
+                return [3 /*break*/, 27];
             case 6:
                 if (!(interaction.commandName === 'stop')) return [3 /*break*/, 12];
                 return [4 /*yield*/, interaction.reply('サーバーを停止しています...')];
@@ -100,7 +108,7 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 return [2 /*return*/];
             case 11:
                 message.edit('✅サーバーを停止しました');
-                return [3 /*break*/, 21];
+                return [3 /*break*/, 27];
             case 12:
                 if (!(interaction.commandName === 'reboot')) return [3 /*break*/, 18];
                 return [4 /*yield*/, interaction.reply('サーバーを再起動しています...')];
@@ -119,7 +127,7 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 return [2 /*return*/];
             case 17:
                 message.edit('✅サーバーを再起動しました');
-                return [3 /*break*/, 21];
+                return [3 /*break*/, 27];
             case 18:
                 if (!(interaction.commandName === 'status')) return [3 /*break*/, 21];
                 return [4 /*yield*/, (0, conoha_1.getStatus)()];
@@ -133,8 +141,28 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 return [4 /*yield*/, interaction.reply('サーバーの状態は' + statusText + 'です')];
             case 20:
                 _a.sent();
-                _a.label = 21;
-            case 21: return [2 /*return*/];
+                return [3 /*break*/, 27];
+            case 21:
+                if (!(interaction.commandName === 'players')) return [3 /*break*/, 27];
+                return [4 /*yield*/, fetch("https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=".concat(env_1.env.STEAM_WEB_API_KEY, "&filter=addr\\").concat(env_1.env.SERVER_IP))];
+            case 22:
+                res = _a.sent();
+                return [4 /*yield*/, res.json()];
+            case 23:
+                json = _a.sent();
+                if (!!json.response) return [3 /*break*/, 25];
+                return [4 /*yield*/, interaction.reply('サーバーが起動していないか、SteamのAPIがダウンしています')];
+            case 24:
+                _a.sent();
+                return [2 /*return*/];
+            case 25:
+                onlinePlayers = json.response.servers[0].players;
+                maxPlayers = json.response.servers[0].max_players;
+                return [4 /*yield*/, interaction.reply("\u73FE\u5728".concat(onlinePlayers, "/").concat(maxPlayers, "\u4EBA\u304C\u30D7\u30EC\u30A4\u4E2D\u3067\u3059"))];
+            case 26:
+                _a.sent();
+                _a.label = 27;
+            case 27: return [2 /*return*/];
         }
     });
 }); });

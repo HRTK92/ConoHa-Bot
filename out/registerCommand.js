@@ -55,6 +55,10 @@ var commands = [
         name: 'status',
         description: 'サーバーの状態を確認する',
     },
+    {
+        name: 'players',
+        description: 'オンラインプレイヤーを確認する',
+    }
 ];
 var rest = new discord_js_1.REST({ version: '10' }).setToken(env_1.env.DISCORD_TOKEN);
 function refreshCommands() {

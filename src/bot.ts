@@ -8,17 +8,25 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user!.tag}!`)
   setInterval(function () {
     getStatus().then((status) => {
-      let statusText = ''
       if (status == 'ACTIVE') {
-        statusText = '起動中'
         client.user!.setStatus('online')
+        fetch(
+          `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${env.STEAM_WEB_API_KEY}&filter=addr\\${env.SERVER_IP}`
+        ).then((res) => {
+          res.json().then((json) => {
+            if (!json.response) return
+            const onlinePlayers = json.response.servers[0].players
+            const maxPlayers = json.response.servers[0].max_players
+            client.user!.setActivity(`${onlinePlayers}/${maxPlayers}人がプレイ中`, {
+              type: ActivityType.Playing,
+            })
+          })
+        })
       }
       if (status == 'SHUTOFF') {
-        statusText = '停止中'
         client.user!.setStatus('idle')
+        client.user!.setActivity(`サーバーは停止中`, { type: ActivityType.Playing })
       }
-
-      client.user!.setActivity(`サーバーは${statusText}`, { type: ActivityType.Playing })
     })
   }, 5000)
 })
@@ -59,6 +67,18 @@ client.on('interactionCreate', async (interaction) => {
     if (status == 'ACTIVE') statusText = '起動中🟢'
     else if (status == 'SHUTOFF') statusText = '停止中🔴'
     await interaction.reply('サーバーの状態は' + statusText + 'です')
+  } else if (interaction.commandName === 'players') {
+    const res = await fetch(
+      `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${env.STEAM_WEB_API_KEY}&filter=addr\\${env.SERVER_IP}`
+    )
+    const json = await res.json()
+    if (!json.response) {
+      await interaction.reply('サーバーが起動していないか、SteamのAPIがダウンしています')
+      return
+    }
+    const onlinePlayers = json.response.servers[0].players
+    const maxPlayers = json.response.servers[0].max_players
+    await interaction.reply(`現在${onlinePlayers}/${maxPlayers}人がプレイ中です`)
   }
 })
 

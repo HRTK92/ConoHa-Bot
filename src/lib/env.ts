@@ -8,6 +8,8 @@ export const envSchema = z.object({
   CONOHA_PASSWORD: z.string(),
   TENANT_ID: z.string(),
   SERVER_ID: z.string(),
+  SERVER_IP: z.string(),
+  STEAM_WEB_API_KEY: z.string(),
 })
 
 export const env = envSchema.parse(process.env)

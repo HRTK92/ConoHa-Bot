@@ -10,5 +10,7 @@ exports.envSchema = zod_1.z.object({
     CONOHA_PASSWORD: zod_1.z.string(),
     TENANT_ID: zod_1.z.string(),
     SERVER_ID: zod_1.z.string(),
+    SERVER_IP: zod_1.z.string(),
+    STEAM_WEB_API_KEY: zod_1.z.string(),
 });
 exports.env = exports.envSchema.parse(process.env);

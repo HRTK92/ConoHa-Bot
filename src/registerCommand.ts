@@ -18,6 +18,10 @@ const commands = [
     name: 'status',
     description: 'サーバーの状態を確認する',
   },
+  {
+    name: 'players',
+    description: 'オンラインプレイヤーを確認する',
+  }
 ]
 
 const rest = new REST({ version: '10' }).setToken(env.DISCORD_TOKEN)
