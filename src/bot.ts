@@ -14,12 +14,15 @@ client.on('ready', () => {
           `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${env.STEAM_WEB_API_KEY}&filter=addr\\${env.SERVER_IP}`
         ).then((res) => {
           res.json().then((json) => {
-            if (!json.response) return
-            const onlinePlayers = json.response.servers[0].players
-            const maxPlayers = json.response.servers[0].max_players
-            client.user!.setActivity(`${onlinePlayers}/${maxPlayers}人がプレイ中`, {
-              type: ActivityType.Playing,
-            })
+            if (Object.keys(json.response).length === 0) {
+              return client.user!.setActivity('サーバーを起動中...', { type: ActivityType.Playing })
+            } else {
+              const onlinePlayers = json.response.servers[0].players
+              const maxPlayers = json.response.servers[0].max_players
+              client.user!.setActivity(`${onlinePlayers}/${maxPlayers}人がサーバー`, {
+                type: ActivityType.Playing,
+              })
+            }
           })
         })
       }
@@ -42,7 +45,7 @@ client.on('interactionCreate', async (interaction) => {
       message.edit(`❌サーバーの起動に失敗しました\n${e.message}`)
       return
     }
-    message.edit('✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります')
+    message.edit('✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります\nボットのステータスを確認してください')
   } else if (interaction.commandName === 'stop') {
     const message = await interaction.reply('サーバーを停止しています...')
     try {
@@ -72,7 +75,7 @@ client.on('interactionCreate', async (interaction) => {
       `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${env.STEAM_WEB_API_KEY}&filter=addr\\${env.SERVER_IP}`
     )
     const json = await res.json()
-    if (!json.response) {
+    if (Object.keys(json.response).length === 0) {
       await interaction.reply('サーバーが起動していないか、SteamのAPIがダウンしています')
       return
     }

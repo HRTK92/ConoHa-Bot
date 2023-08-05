@@ -48,13 +48,16 @@ client.on('ready', function () {
                 client.user.setStatus('online');
                 fetch("https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=".concat(env_1.env.STEAM_WEB_API_KEY, "&filter=addr\\").concat(env_1.env.SERVER_IP)).then(function (res) {
                     res.json().then(function (json) {
-                        if (!json.response)
-                            return;
-                        var onlinePlayers = json.response.servers[0].players;
-                        var maxPlayers = json.response.servers[0].max_players;
-                        client.user.setActivity("".concat(onlinePlayers, "/").concat(maxPlayers, "\u4EBA\u304C\u30D7\u30EC\u30A4\u4E2D"), {
-                            type: discord_js_1.ActivityType.Playing,
-                        });
+                        if (Object.keys(json.response).length === 0) {
+                            return client.user.setActivity('サーバーを起動中...', { type: discord_js_1.ActivityType.Playing });
+                        }
+                        else {
+                            var onlinePlayers = json.response.servers[0].players;
+                            var maxPlayers = json.response.servers[0].max_players;
+                            client.user.setActivity("".concat(onlinePlayers, "/").concat(maxPlayers, "\u4EBA\u304C\u30B5\u30FC\u30D0\u30FC"), {
+                                type: discord_js_1.ActivityType.Playing,
+                            });
+                        }
                     });
                 });
             }
@@ -88,7 +91,7 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 message.edit("\u274C\u30B5\u30FC\u30D0\u30FC\u306E\u8D77\u52D5\u306B\u5931\u6557\u3057\u307E\u3057\u305F\n".concat(e_1.message));
                 return [2 /*return*/];
             case 5:
-                message.edit('✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります');
+                message.edit('✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります\nボットのステータスを確認してください');
                 return [3 /*break*/, 27];
             case 6:
                 if (!(interaction.commandName === 'stop')) return [3 /*break*/, 12];
@@ -150,7 +153,7 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 return [4 /*yield*/, res.json()];
             case 23:
                 json = _a.sent();
-                if (!!json.response) return [3 /*break*/, 25];
+                if (!(Object.keys(json.response).length === 0)) return [3 /*break*/, 25];
                 return [4 /*yield*/, interaction.reply('サーバーが起動していないか、SteamのAPIがダウンしています')];
             case 24:
                 _a.sent();
