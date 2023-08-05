@@ -1,8 +1,8 @@
 {
 	"scripts": {
-		"build": "tsc src/**.ts --outDir out",
-		"start": "node ./out/bot.js",
-		"register": "node ./out/registerCommand.js"
+		"build": "tsc src/**.ts --outDir dist",
+		"start": "node ./dist/bot.js",
+		"register": "node ./dist/registerCommand.js"
 	},
 	"dependencies": {
 		"discord.js": "^14.12.1",
