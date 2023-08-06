@@ -39,7 +39,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
 var conoha_1 = require("./lib/conoha");
 var env_1 = require("./lib/env");
-var client = new discord_js_1.Client({ intents: [discord_js_1.GatewayIntentBits.Guilds] });
+var SHUTDOWN_TIME = 15 * 60 * 1000;
+var timeWithoutPlayers = 0;
+var client = new discord_js_1.Client({
+    intents: [discord_js_1.GatewayIntentBits.Guilds]
+});
 client.on('ready', function () {
     console.log("Logged in as ".concat(client.user.tag, "!"));
     setInterval(function () {
@@ -57,6 +61,17 @@ client.on('ready', function () {
                             client.user.setActivity("".concat(onlinePlayers, "/").concat(maxPlayers, "\u4EBA\u304C\u30B5\u30FC\u30D0\u30FC"), {
                                 type: discord_js_1.ActivityType.Playing,
                             });
+                            if (onlinePlayers === 0) {
+                                timeWithoutPlayers += 5000;
+                            }
+                            else {
+                                timeWithoutPlayers = 0;
+                            }
+                            if (timeWithoutPlayers >= SHUTDOWN_TIME) {
+                                (0, conoha_1.doAction)('stop');
+                                console.log('サーバーを停止しました');
+                                timeWithoutPlayers = 0;
+                            }
                         }
                     });
                 });

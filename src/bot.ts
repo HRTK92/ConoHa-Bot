@@ -2,7 +2,14 @@ import { ActivityType, Client, GatewayIntentBits } from 'discord.js'
 import { doAction, getStatus } from './lib/conoha'
 import { env } from './lib/env'
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] })
+const SHUTDOWN_TIME = 15 * 60 * 1000
+let timeWithoutPlayers: number = 0
+
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds]
+})
+
+
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user!.tag}!`)
@@ -22,6 +29,16 @@ client.on('ready', () => {
               client.user!.setActivity(`${onlinePlayers}/${maxPlayers}人がサーバー`, {
                 type: ActivityType.Playing,
               })
+              if (onlinePlayers === 0) {
+                timeWithoutPlayers += 5000
+              } else {
+                timeWithoutPlayers = 0
+              }
+              if (timeWithoutPlayers >= SHUTDOWN_TIME) {
+                doAction('stop')
+                console.log('サーバーを停止しました')
+                timeWithoutPlayers = 0
+              }
             }
           })
         })
@@ -45,7 +62,9 @@ client.on('interactionCreate', async (interaction) => {
       message.edit(`❌サーバーの起動に失敗しました\n${e.message}`)
       return
     }
-    message.edit('✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります\nボットのステータスを確認してください')
+    message.edit(
+      '✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります\nボットのステータスを確認してください'
+    )
   } else if (interaction.commandName === 'stop') {
     const message = await interaction.reply('サーバーを停止しています...')
     try {
