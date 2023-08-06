@@ -6,10 +6,8 @@ const SHUTDOWN_TIME = 15 * 60 * 1000
 let timeWithoutPlayers: number = 0
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds]
+  intents: [GatewayIntentBits.Guilds],
 })
-
-
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user!.tag}!`)
@@ -65,6 +63,8 @@ client.on('interactionCreate', async (interaction) => {
     message.edit(
       '✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります\nボットのステータスを確認してください'
     )
+    client.user!.setStatus('online')
+    client.user!.setActivity('サーバーを起動中...', { type: ActivityType.Playing })
   } else if (interaction.commandName === 'stop') {
     const message = await interaction.reply('サーバーを停止しています...')
     try {
@@ -74,6 +74,8 @@ client.on('interactionCreate', async (interaction) => {
       return
     }
     message.edit('✅サーバーを停止しました')
+    client.user!.setStatus('idle')
+    client.user!.setActivity('サーバーは停止中', { type: ActivityType.Playing })
   } else if (interaction.commandName === 'reboot') {
     const message = await interaction.reply('サーバーを再起動しています...')
     try {

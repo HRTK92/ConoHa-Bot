@@ -42,7 +42,7 @@ var env_1 = require("./lib/env");
 var SHUTDOWN_TIME = 15 * 60 * 1000;
 var timeWithoutPlayers = 0;
 var client = new discord_js_1.Client({
-    intents: [discord_js_1.GatewayIntentBits.Guilds]
+    intents: [discord_js_1.GatewayIntentBits.Guilds],
 });
 client.on('ready', function () {
     console.log("Logged in as ".concat(client.user.tag, "!"));
@@ -107,6 +107,8 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 return [2 /*return*/];
             case 5:
                 message.edit('✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります\nボットのステータスを確認してください');
+                client.user.setStatus('online');
+                client.user.setActivity('サーバーを起動中...', { type: discord_js_1.ActivityType.Playing });
                 return [3 /*break*/, 27];
             case 6:
                 if (!(interaction.commandName === 'stop')) return [3 /*break*/, 12];
@@ -126,6 +128,8 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 return [2 /*return*/];
             case 11:
                 message.edit('✅サーバーを停止しました');
+                client.user.setStatus('idle');
+                client.user.setActivity('サーバーは停止中', { type: discord_js_1.ActivityType.Playing });
                 return [3 /*break*/, 27];
             case 12:
                 if (!(interaction.commandName === 'reboot')) return [3 /*break*/, 18];
