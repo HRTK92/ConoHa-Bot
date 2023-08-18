@@ -2,7 +2,7 @@ import { ActivityType, Client, GatewayIntentBits } from 'discord.js'
 import { doAction, getStatus } from './lib/conoha'
 import { env } from './lib/env'
 
-const SHUTDOWN_TIME = 15 * 60 * 1000
+const SHUTDOWN_TIME = null // 15 * 60 * 1000
 let timeWithoutPlayers: number = 0
 
 const client = new Client({
@@ -32,7 +32,7 @@ client.on('ready', () => {
               } else {
                 timeWithoutPlayers = 0
               }
-              if (timeWithoutPlayers >= SHUTDOWN_TIME) {
+              if (SHUTDOWN_TIME !== null && timeWithoutPlayers >= SHUTDOWN_TIME) {
                 doAction('stop')
                 console.log('サーバーを停止しました')
                 timeWithoutPlayers = 0
