@@ -84,7 +84,7 @@ client.on('ready', function () {
     }, 5000);
 });
 client.on('interactionCreate', function (interaction) { return __awaiter(void 0, void 0, void 0, function () {
-    var message, e_1, cheakIntervalId_1, message, e_2, message, e_3, status_1, statusText, res, json, onlinePlayers, maxPlayers;
+    var message, e_1, cheakIntervalId_1, message, e_2, message, e_3, cheakIntervalId_2, status_1, statusText, res, json, onlinePlayers, maxPlayers;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -165,6 +165,24 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 return [2 /*return*/];
             case 17:
                 message.edit('✅サーバーを再起動しました');
+                client.user.setStatus('online');
+                client.user.setActivity('サーバーを起動中...', { type: discord_js_1.ActivityType.Playing });
+                cheakIntervalId_2 = setInterval(function () {
+                    fetch("https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=".concat(env_1.env.STEAM_WEB_API_KEY, "&filter=addr\\").concat(env_1.env.SERVER_IP)).then(function (res) {
+                        res.json().then(function (json) {
+                            if (Object.keys(json.response).length === 0) {
+                                return;
+                            }
+                            else {
+                                var channel = client.channels.cache.get(interaction.channelId);
+                                if (channel) {
+                                    channel.send("<@".concat(interaction.user.id, "> \u2705\u30B5\u30FC\u30D0\u30FC\u304C\u8D77\u52D5\u3057\u307E\u3057\u305F"));
+                                    clearInterval(cheakIntervalId_2);
+                                }
+                            }
+                        });
+                    });
+                }, 5000);
                 return [3 /*break*/, 27];
             case 18:
                 if (!(interaction.commandName === 'status')) return [3 /*break*/, 21];

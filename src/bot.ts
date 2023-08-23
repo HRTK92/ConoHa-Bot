@@ -102,6 +102,25 @@ client.on('interactionCreate', async (interaction) => {
       return
     }
     message.edit('✅サーバーを再起動しました')
+    client.user!.setStatus('online')
+    client.user!.setActivity('サーバーを起動中...', { type: ActivityType.Playing })
+    const cheakIntervalId = setInterval(() => {
+      fetch(
+        `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${env.STEAM_WEB_API_KEY}&filter=addr\\${env.SERVER_IP}`
+      ).then((res) => {
+        res.json().then((json) => {
+          if (Object.keys(json.response).length === 0) {
+            return
+          } else {
+            const channel = client.channels.cache.get(interaction.channelId) as TextChannel | undefined
+            if (channel) {
+              channel.send(`<@${interaction.user.id}> ✅サーバーが起動しました`)
+              clearInterval(cheakIntervalId)
+            }
+          }
+        })
+      })
+    }, 5000)
   } else if (interaction.commandName === 'status') {
     const status = await getStatus()
     let statusText = ''
