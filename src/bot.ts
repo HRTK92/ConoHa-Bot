@@ -73,7 +73,9 @@ client.on('interactionCreate', async (interaction) => {
           if (Object.keys(json.response).length === 0) {
             return
           } else {
-            const channel = client.channels.cache.get(interaction.channelId) as TextChannel | undefined
+            const channel = client.channels.cache.get(interaction.channelId) as
+              | TextChannel
+              | undefined
             if (channel) {
               channel.send(`<@${interaction.user.id}> ✅サーバーが起動しました`)
               clearInterval(cheakIntervalId)
@@ -112,7 +114,9 @@ client.on('interactionCreate', async (interaction) => {
           if (Object.keys(json.response).length === 0) {
             return
           } else {
-            const channel = client.channels.cache.get(interaction.channelId) as TextChannel | undefined
+            const channel = client.channels.cache.get(interaction.channelId) as
+              | TextChannel
+              | undefined
             if (channel) {
               channel.send(`<@${interaction.user.id}> ✅サーバーが起動しました`)
               clearInterval(cheakIntervalId)
