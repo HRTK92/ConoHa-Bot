@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
 var conoha_1 = require("./lib/conoha");
 var env_1 = require("./lib/env");
-var SHUTDOWN_TIME = 15 * 60 * 1000;
+var SHUTDOWN_TIME = null; // 15 * 60 * 1000
 var timeWithoutPlayers = 0;
 var client = new discord_js_1.Client({
     intents: [discord_js_1.GatewayIntentBits.Guilds],
@@ -67,7 +67,7 @@ client.on('ready', function () {
                             else {
                                 timeWithoutPlayers = 0;
                             }
-                            if (timeWithoutPlayers >= SHUTDOWN_TIME) {
+                            if (SHUTDOWN_TIME !== null && timeWithoutPlayers >= SHUTDOWN_TIME) {
                                 (0, conoha_1.doAction)('stop');
                                 console.log('サーバーを停止しました');
                                 timeWithoutPlayers = 0;
@@ -84,7 +84,7 @@ client.on('ready', function () {
     }, 5000);
 });
 client.on('interactionCreate', function (interaction) { return __awaiter(void 0, void 0, void 0, function () {
-    var message, e_1, message, e_2, message, e_3, status_1, statusText, res, json, onlinePlayers, maxPlayers;
+    var message, e_1, cheakIntervalId_1, message, e_2, message, e_3, status_1, statusText, res, json, onlinePlayers, maxPlayers;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -106,9 +106,25 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 message.edit("\u274C\u30B5\u30FC\u30D0\u30FC\u306E\u8D77\u52D5\u306B\u5931\u6557\u3057\u307E\u3057\u305F\n".concat(e_1.message));
                 return [2 /*return*/];
             case 5:
-                message.edit('✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります\nボットのステータスを確認してください');
+                message.edit('サーバーを起動しています\n参加できるようになるまで数分かかる場合があります\n参加が可能になったら、メンションでお知らせします');
                 client.user.setStatus('online');
                 client.user.setActivity('サーバーを起動中...', { type: discord_js_1.ActivityType.Playing });
+                cheakIntervalId_1 = setInterval(function () {
+                    fetch("https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=".concat(env_1.env.STEAM_WEB_API_KEY, "&filter=addr\\").concat(env_1.env.SERVER_IP)).then(function (res) {
+                        res.json().then(function (json) {
+                            if (Object.keys(json.response).length === 0) {
+                                return;
+                            }
+                            else {
+                                var channel = client.channels.cache.get(interaction.channelId);
+                                if (channel) {
+                                    channel.send("<@".concat(interaction.user.id, "> \u2705\u30B5\u30FC\u30D0\u30FC\u304C\u8D77\u52D5\u3057\u307E\u3057\u305F"));
+                                    clearInterval(cheakIntervalId_1);
+                                }
+                            }
+                        });
+                    });
+                }, 5000);
                 return [3 /*break*/, 27];
             case 6:
                 if (!(interaction.commandName === 'stop')) return [3 /*break*/, 12];

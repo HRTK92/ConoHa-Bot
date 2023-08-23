@@ -1,4 +1,4 @@
-import { ActivityType, Client, GatewayIntentBits } from 'discord.js'
+import { ActivityType, Client, GatewayIntentBits, TextChannel } from 'discord.js'
 import { doAction, getStatus } from './lib/conoha'
 import { env } from './lib/env'
 
@@ -11,7 +11,7 @@ const client = new Client({
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user!.tag}!`)
-  setInterval(function () {
+  setInterval(() => {
     getStatus().then((status) => {
       if (status == 'ACTIVE') {
         client.user!.setStatus('online')
@@ -61,10 +61,27 @@ client.on('interactionCreate', async (interaction) => {
       return
     }
     message.edit(
-      '✅サーバーを起動しました\n参加できるようになるまで数分かかる場合があります\nボットのステータスを確認してください'
+      'サーバーを起動しています\n参加できるようになるまで数分かかる場合があります\n参加が可能になったら、メンションでお知らせします'
     )
     client.user!.setStatus('online')
     client.user!.setActivity('サーバーを起動中...', { type: ActivityType.Playing })
+    const cheakIntervalId = setInterval(() => {
+      fetch(
+        `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${env.STEAM_WEB_API_KEY}&filter=addr\\${env.SERVER_IP}`
+      ).then((res) => {
+        res.json().then((json) => {
+          if (Object.keys(json.response).length === 0) {
+            return
+          } else {
+            const channel = client.channels.cache.get(interaction.channelId) as TextChannel | undefined
+            if (channel) {
+              channel.send(`<@${interaction.user.id}> ✅サーバーが起動しました`)
+              clearInterval(cheakIntervalId)
+            }
+          }
+        })
+      })
+    }, 5000)
   } else if (interaction.commandName === 'stop') {
     const message = await interaction.reply('サーバーを停止しています...')
     try {
