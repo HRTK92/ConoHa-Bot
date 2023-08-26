@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
 var conoha_1 = require("./lib/conoha");
 var env_1 = require("./lib/env");
-var SHUTDOWN_TIME = null; // 15 * 60 * 1000
+var SHUTDOWN_TIME = 15 * 60 * 1000;
 var timeWithoutPlayers = 0;
 var client = new discord_js_1.Client({
     intents: [discord_js_1.GatewayIntentBits.Guilds],

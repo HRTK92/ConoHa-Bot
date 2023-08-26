@@ -2,7 +2,7 @@ import { ActivityType, Client, GatewayIntentBits, TextChannel } from 'discord.js
 import { doAction, getStatus } from './lib/conoha'
 import { env } from './lib/env'
 
-const SHUTDOWN_TIME = null // 15 * 60 * 1000
+const SHUTDOWN_TIME = 15 * 60 * 1000
 let timeWithoutPlayers: number = 0
 
 const client = new Client({
