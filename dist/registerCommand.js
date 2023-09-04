@@ -42,6 +42,18 @@ var commands = [
     {
         name: 'start',
         description: 'サーバーを起動する',
+        options: [
+            {
+                name: 'auto_shutdown',
+                description: 'プレイヤーがいなくなったら自動でサーバーを停止するか',
+                type: 5,
+            },
+            {
+                name: 'shutdown_time',
+                description: 'プレイヤーがいなくなってからサーバーを停止するまでの時間(分)',
+                type: 4,
+            },
+        ],
     },
     {
         name: 'stop',
@@ -58,7 +70,7 @@ var commands = [
     {
         name: 'players',
         description: 'オンラインプレイヤーを確認する',
-    }
+    },
 ];
 var rest = new discord_js_1.REST({ version: '10' }).setToken(env_1.env.DISCORD_TOKEN);
 function refreshCommands() {

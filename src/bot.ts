@@ -2,7 +2,8 @@ import { ActivityType, Client, GatewayIntentBits, TextChannel } from 'discord.js
 import { doAction, getStatus } from './lib/conoha'
 import { env } from './lib/env'
 
-const SHUTDOWN_TIME = 15 * 60 * 1000
+let AUTO_SHUTDOWN: boolean = true
+let SHUTDOWN_TIME: number = 15 * 60 * 1000
 let timeWithoutPlayers: number = 0
 
 const client = new Client({
@@ -32,7 +33,7 @@ client.on('ready', () => {
               } else {
                 timeWithoutPlayers = 0
               }
-              if (SHUTDOWN_TIME !== null && timeWithoutPlayers >= SHUTDOWN_TIME) {
+              if (SHUTDOWN_TIME !== null && timeWithoutPlayers >= SHUTDOWN_TIME && AUTO_SHUTDOWN) {
                 doAction('stop')
                 console.log('サーバーを停止しました')
                 timeWithoutPlayers = 0
@@ -53,6 +54,9 @@ client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return
 
   if (interaction.commandName === 'start') {
+    const resAutoShutdown = interaction.options.getBoolean('auto_shutdown')
+    const resShutdownTime = interaction.options.getInteger('shutdown_time')
+
     const message = await interaction.reply('サーバーを起動しています...')
     try {
       await doAction('start')
@@ -65,6 +69,7 @@ client.on('interactionCreate', async (interaction) => {
     )
     client.user!.setStatus('online')
     client.user!.setActivity('サーバーを起動中...', { type: ActivityType.Playing })
+
     const cheakIntervalId = setInterval(() => {
       fetch(
         `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${env.STEAM_WEB_API_KEY}&filter=addr\\${env.SERVER_IP}`
@@ -77,7 +82,17 @@ client.on('interactionCreate', async (interaction) => {
               | TextChannel
               | undefined
             if (channel) {
-              channel.send(`<@${interaction.user.id}> ✅サーバーが起動しました`)
+              if (resShutdownTime) SHUTDOWN_TIME = resShutdownTime * 60 * 1000
+              if (resAutoShutdown === null) AUTO_SHUTDOWN = true
+              else AUTO_SHUTDOWN = resAutoShutdown
+
+              channel.send(
+                `<@${interaction.user.id}> ✅サーバーが起動しました\n${
+                  resAutoShutdown
+                    ? `${(SHUTDOWN_TIME / 60) * 1000}間プレイヤーがいない場合は停止します`
+                    : 'サーバーは自動で停止しません'
+                }}`
+              )
               clearInterval(cheakIntervalId)
             }
           }

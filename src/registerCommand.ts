@@ -5,6 +5,18 @@ const commands = [
   {
     name: 'start',
     description: 'サーバーを起動する',
+    options: [
+      {
+        name: 'auto_shutdown',
+        description: 'プレイヤーがいなくなったら自動でサーバーを停止するか',
+        type: 5,
+      },
+      {
+        name: 'shutdown_time',
+        description: 'プレイヤーがいなくなってからサーバーを停止するまでの時間(分)',
+        type: 4,
+      },
+    ],
   },
   {
     name: 'stop',
@@ -21,7 +33,7 @@ const commands = [
   {
     name: 'players',
     description: 'オンラインプレイヤーを確認する',
-  }
+  },
 ]
 
 const rest = new REST({ version: '10' }).setToken(env.DISCORD_TOKEN)
