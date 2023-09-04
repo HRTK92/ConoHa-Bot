@@ -65,6 +65,9 @@ function getToken() {
                     return [4 /*yield*/, res.json()];
                 case 2:
                     json = _a.sent();
+                    if (!res.ok) {
+                        throw new Error(json);
+                    }
                     return [2 /*return*/, json.access.token.id];
             }
         });
@@ -75,7 +78,9 @@ var doAction = function (action) { return __awaiter(void 0, void 0, void 0, func
     var token, status, body, res, json;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, getToken()];
+            case 0: return [4 /*yield*/, getToken().catch(function (e) {
+                    throw new Error(e);
+                })];
             case 1:
                 token = _a.sent();
                 if (!token)

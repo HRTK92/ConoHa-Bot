@@ -48,13 +48,16 @@ var client = new discord_js_1.Client({
 client.on('ready', function () {
     console.log("Logged in as ".concat(client.user.tag, "!"));
     setInterval(function () {
-        (0, conoha_1.getStatus)().then(function (status) {
+        (0, conoha_1.getStatus)()
+            .then(function (status) {
             if (status == 'ACTIVE') {
                 client.user.setStatus('online');
                 fetch("https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=".concat(env_1.env.STEAM_WEB_API_KEY, "&filter=addr\\").concat(env_1.env.SERVER_IP)).then(function (res) {
                     res.json().then(function (json) {
                         if (Object.keys(json.response).length === 0) {
-                            return client.user.setActivity('サーバーを起動中...', { type: discord_js_1.ActivityType.Playing });
+                            return client.user.setActivity('サーバーを起動中...', {
+                                type: discord_js_1.ActivityType.Playing,
+                            });
                         }
                         else {
                             var onlinePlayers = json.response.servers[0].players;
@@ -68,7 +71,9 @@ client.on('ready', function () {
                             else {
                                 timeWithoutPlayers = 0;
                             }
-                            if (SHUTDOWN_TIME !== null && timeWithoutPlayers >= SHUTDOWN_TIME && AUTO_SHUTDOWN) {
+                            if (SHUTDOWN_TIME !== null &&
+                                timeWithoutPlayers >= SHUTDOWN_TIME &&
+                                AUTO_SHUTDOWN) {
                                 (0, conoha_1.doAction)('stop');
                                 console.log('サーバーを停止しました');
                                 timeWithoutPlayers = 0;
@@ -81,6 +86,10 @@ client.on('ready', function () {
                 client.user.setStatus('idle');
                 client.user.setActivity("\u30B5\u30FC\u30D0\u30FC\u306F\u505C\u6B62\u4E2D", { type: discord_js_1.ActivityType.Playing });
             }
+        })
+            .catch(function (e) {
+            client.user.setStatus('dnd');
+            client.user.setActivity('エラーが発生しました', { type: discord_js_1.ActivityType.Playing });
         });
     }, 5000);
 });

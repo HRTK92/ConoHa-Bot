@@ -20,11 +20,16 @@ export async function getToken() {
     }),
   })
   const json = await res.json()
+  if (!res.ok) {
+    throw new Error(json)
+  }
   return json.access.token.id
 }
 
 export const doAction = async (action: 'start' | 'stop' | 'reboot') => {
-  const token = await getToken()
+  const token = await getToken().catch((e) => {
+    throw new Error(e)
+  })
   if (!token) throw new Error('Token not found')
   const status = await getStatus()
   if (action == 'start' && status == 'ACTIVE') throw new Error('すでに起動しています')

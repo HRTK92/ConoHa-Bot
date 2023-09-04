@@ -13,40 +13,51 @@ const client = new Client({
 client.on('ready', () => {
   console.log(`Logged in as ${client.user!.tag}!`)
   setInterval(() => {
-    getStatus().then((status) => {
-      if (status == 'ACTIVE') {
-        client.user!.setStatus('online')
-        fetch(
-          `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${env.STEAM_WEB_API_KEY}&filter=addr\\${env.SERVER_IP}`
-        ).then((res) => {
-          res.json().then((json) => {
-            if (Object.keys(json.response).length === 0) {
-              return client.user!.setActivity('サーバーを起動中...', { type: ActivityType.Playing })
-            } else {
-              const onlinePlayers = json.response.servers[0].players
-              const maxPlayers = json.response.servers[0].max_players
-              client.user!.setActivity(`${onlinePlayers}/${maxPlayers}人がサーバー`, {
-                type: ActivityType.Playing,
-              })
-              if (onlinePlayers === 0) {
-                timeWithoutPlayers += 5000
+    getStatus()
+      .then((status) => {
+        if (status == 'ACTIVE') {
+          client.user!.setStatus('online')
+          fetch(
+            `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${env.STEAM_WEB_API_KEY}&filter=addr\\${env.SERVER_IP}`
+          ).then((res) => {
+            res.json().then((json) => {
+              if (Object.keys(json.response).length === 0) {
+                return client.user!.setActivity('サーバーを起動中...', {
+                  type: ActivityType.Playing,
+                })
               } else {
-                timeWithoutPlayers = 0
+                const onlinePlayers = json.response.servers[0].players
+                const maxPlayers = json.response.servers[0].max_players
+                client.user!.setActivity(`${onlinePlayers}/${maxPlayers}人がサーバー`, {
+                  type: ActivityType.Playing,
+                })
+                if (onlinePlayers === 0) {
+                  timeWithoutPlayers += 5000
+                } else {
+                  timeWithoutPlayers = 0
+                }
+                if (
+                  SHUTDOWN_TIME !== null &&
+                  timeWithoutPlayers >= SHUTDOWN_TIME &&
+                  AUTO_SHUTDOWN
+                ) {
+                  doAction('stop')
+                  console.log('サーバーを停止しました')
+                  timeWithoutPlayers = 0
+                }
               }
-              if (SHUTDOWN_TIME !== null && timeWithoutPlayers >= SHUTDOWN_TIME && AUTO_SHUTDOWN) {
-                doAction('stop')
-                console.log('サーバーを停止しました')
-                timeWithoutPlayers = 0
-              }
-            }
+            })
           })
-        })
-      }
-      if (status == 'SHUTOFF') {
-        client.user!.setStatus('idle')
-        client.user!.setActivity(`サーバーは停止中`, { type: ActivityType.Playing })
-      }
-    })
+        }
+        if (status == 'SHUTOFF') {
+          client.user!.setStatus('idle')
+          client.user!.setActivity(`サーバーは停止中`, { type: ActivityType.Playing })
+        }
+      })
+      .catch((e) => {
+        client.user!.setStatus('dnd')
+        client.user!.setActivity('エラーが発生しました', { type: ActivityType.Playing })
+      })
   }, 5000)
 })
 
