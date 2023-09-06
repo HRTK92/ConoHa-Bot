@@ -65,8 +65,13 @@ client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return
 
   if (interaction.commandName === 'start') {
-    const resAutoShutdown = interaction.options.getBoolean('auto_shutdown')
-    const resShutdownTime = interaction.options.getInteger('shutdown_time')
+    const resAutoShutdown = interaction.options.getBoolean('auto_shutdown') || AUTO_SHUTDOWN
+    let resShutdownTime = interaction.options.getInteger('shutdown_time')
+    if (resShutdownTime) {
+      resShutdownTime = resShutdownTime * 60 * 1000
+    } else {
+      resShutdownTime = SHUTDOWN_TIME
+    }
 
     const message = await interaction.reply('サーバーを起動しています...')
     try {
@@ -93,16 +98,12 @@ client.on('interactionCreate', async (interaction) => {
               | TextChannel
               | undefined
             if (channel) {
-              if (resShutdownTime) SHUTDOWN_TIME = resShutdownTime * 60 * 1000
-              if (resAutoShutdown === null) AUTO_SHUTDOWN = true
-              else AUTO_SHUTDOWN = resAutoShutdown
-
               channel.send(
                 `<@${interaction.user.id}> ✅サーバーが起動しました\n${
                   resAutoShutdown
                     ? `${(SHUTDOWN_TIME / 60) * 1000}間プレイヤーがいない場合は停止します`
                     : 'サーバーは自動で停止しません'
-                }}`
+                }`
               )
               clearInterval(cheakIntervalId)
             }

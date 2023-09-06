@@ -94,15 +94,21 @@ client.on('ready', function () {
     }, 5000);
 });
 client.on('interactionCreate', function (interaction) { return __awaiter(void 0, void 0, void 0, function () {
-    var resAutoShutdown_1, resShutdownTime_1, message, e_1, cheakIntervalId_1, message, e_2, message, e_3, cheakIntervalId_2, status_1, statusText, res, json, onlinePlayers, maxPlayers;
+    var resAutoShutdown_1, resShutdownTime, message, e_1, cheakIntervalId_1, message, e_2, message, e_3, cheakIntervalId_2, status_1, statusText, res, json, onlinePlayers, maxPlayers;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 if (!interaction.isChatInputCommand())
                     return [2 /*return*/];
                 if (!(interaction.commandName === 'start')) return [3 /*break*/, 6];
-                resAutoShutdown_1 = interaction.options.getBoolean('auto_shutdown');
-                resShutdownTime_1 = interaction.options.getInteger('shutdown_time');
+                resAutoShutdown_1 = interaction.options.getBoolean('auto_shutdown') || AUTO_SHUTDOWN;
+                resShutdownTime = interaction.options.getInteger('shutdown_time');
+                if (resShutdownTime) {
+                    resShutdownTime = resShutdownTime * 60 * 1000;
+                }
+                else {
+                    resShutdownTime = SHUTDOWN_TIME;
+                }
                 return [4 /*yield*/, interaction.reply('サーバーを起動しています...')];
             case 1:
                 message = _a.sent();
@@ -130,15 +136,9 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                             else {
                                 var channel = client.channels.cache.get(interaction.channelId);
                                 if (channel) {
-                                    if (resShutdownTime_1)
-                                        SHUTDOWN_TIME = resShutdownTime_1 * 60 * 1000;
-                                    if (resAutoShutdown_1 === null)
-                                        AUTO_SHUTDOWN = true;
-                                    else
-                                        AUTO_SHUTDOWN = resAutoShutdown_1;
                                     channel.send("<@".concat(interaction.user.id, "> \u2705\u30B5\u30FC\u30D0\u30FC\u304C\u8D77\u52D5\u3057\u307E\u3057\u305F\n").concat(resAutoShutdown_1
                                         ? "".concat((SHUTDOWN_TIME / 60) * 1000, "\u9593\u30D7\u30EC\u30A4\u30E4\u30FC\u304C\u3044\u306A\u3044\u5834\u5408\u306F\u505C\u6B62\u3057\u307E\u3059")
-                                        : 'サーバーは自動で停止しません', "}"));
+                                        : 'サーバーは自動で停止しません'));
                                     clearInterval(cheakIntervalId_1);
                                 }
                             }
