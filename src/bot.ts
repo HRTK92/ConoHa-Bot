@@ -99,7 +99,7 @@ client.on('interactionCreate', async (interaction) => {
               channel.send(
                 `<@${interaction.user.id}> ✅サーバーが起動しました\n${
                   resAutoShutdown
-                    ? `${(SHUTDOWN_TIME / 60) * 1000}間プレイヤーがいない場合は停止します`
+                    ? `${SHUTDOWN_TIME / (60 * 1000)}間プレイヤーがいない場合は停止します`
                     : 'サーバーは自動で停止しません'
                 }`
               )
