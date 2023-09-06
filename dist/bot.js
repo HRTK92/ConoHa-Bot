@@ -124,7 +124,7 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                 message.edit("\u274C\u30B5\u30FC\u30D0\u30FC\u306E\u8D77\u52D5\u306B\u5931\u6557\u3057\u307E\u3057\u305F\n".concat(e_1.message));
                 return [2 /*return*/];
             case 5:
-                message.edit('サーバーを起動しています\n参加できるようになるまで数分かかる場合があります\n参加が可能になったら、メンションでお知らせします');
+                message.edit('サーバーを起動しています\n参加できるようになるまで数分かかる場合があります');
                 client.user.setStatus('online');
                 client.user.setActivity('サーバーを起動中...', { type: discord_js_1.ActivityType.Playing });
                 cheakIntervalId_1 = setInterval(function () {

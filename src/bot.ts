@@ -80,9 +80,7 @@ client.on('interactionCreate', async (interaction) => {
       message.edit(`❌サーバーの起動に失敗しました\n${e.message}`)
       return
     }
-    message.edit(
-      'サーバーを起動しています\n参加できるようになるまで数分かかる場合があります\n参加が可能になったら、メンションでお知らせします'
-    )
+    message.edit('サーバーを起動しています\n参加できるようになるまで数分かかる場合があります')
     client.user!.setStatus('online')
     client.user!.setActivity('サーバーを起動中...', { type: ActivityType.Playing })
 
