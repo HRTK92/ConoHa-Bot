@@ -137,7 +137,7 @@ client.on('interactionCreate', function (interaction) { return __awaiter(void 0,
                                 var channel = client.channels.cache.get(interaction.channelId);
                                 if (channel) {
                                     channel.send("<@".concat(interaction.user.id, "> \u2705\u30B5\u30FC\u30D0\u30FC\u304C\u8D77\u52D5\u3057\u307E\u3057\u305F\n").concat(resAutoShutdown_1
-                                        ? "".concat(SHUTDOWN_TIME / (60 * 1000), "\u9593\u30D7\u30EC\u30A4\u30E4\u30FC\u304C\u3044\u306A\u3044\u5834\u5408\u306F\u505C\u6B62\u3057\u307E\u3059")
+                                        ? "".concat(SHUTDOWN_TIME / (60 * 1000), "\u5206\u9593\u30D7\u30EC\u30A4\u30E4\u30FC\u304C\u3044\u306A\u3044\u5834\u5408\u306F\u505C\u6B62\u3057\u307E\u3059")
                                         : 'サーバーは自動で停止しません'));
                                     clearInterval(cheakIntervalId_1);
                                 }
