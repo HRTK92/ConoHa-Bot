@@ -5,18 +5,6 @@ const commands = [
   {
     name: 'start',
     description: 'サーバーを起動する',
-    options: [
-      {
-        name: 'auto_shutdown',
-        description: 'プレイヤーがいなくなったら自動でサーバーを停止するか',
-        type: 5,
-      },
-      {
-        name: 'shutdown_time',
-        description: 'プレイヤーがいなくなってからサーバーを停止するまでの時間(分)',
-        type: 4,
-      },
-    ],
   },
   {
     name: 'stop',
@@ -29,10 +17,6 @@ const commands = [
   {
     name: 'status',
     description: 'サーバーの状態を確認する',
-  },
-  {
-    name: 'players',
-    description: 'オンラインプレイヤーを確認する',
   },
 ]
 
